@@ -10,7 +10,7 @@ new_year = datetime.date(today.year + 1, 1, 1)
 config = {
     "song": "TheFatRat - Xenogenesis",
     "volume": 0.5,
-    "debug": True, # to test the song
+    "debug": False, # to test the song
     "debugSettings": {
         "secondsLeft": 3, # seconds left untill new year + song drop length, you can put negative numbers too
     },
