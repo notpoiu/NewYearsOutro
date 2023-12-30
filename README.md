@@ -16,7 +16,11 @@ To test the app you can edit the "debug" property in the configuration dictionar
 config = {
     "song": "TheFatRat - Xenogenesis",
     "volume": 0.5,
-    "debug": True, # Change this to False to disable debug mode
+    "debug": True, # to test the song
+    "debugSettings": {
+        "secondsLeft": 3, # seconds left untill new year + song drop length, you can put negative numbers too
+    },
+    "refreshCountdown": 100, # seconds untill the countdown refreshes to the next year
     "temp": {
         "didDebug": False,
         "didPlay": False
@@ -28,9 +32,13 @@ config = {
 To change the song you can edit the "song" property in the configuration dictionary in `main.py`:
 ```python
 config = {
-    "song": "your song", # Change this to the song you want
+    "song": "your song",
     "volume": 0.5,
-    "debug": True,
+    "debug": True, # to test the song
+    "debugSettings": {
+        "secondsLeft": 3, # seconds left untill new year + song drop length, you can put negative numbers too
+    },
+    "refreshCountdown": 100, # seconds untill the countdown refreshes to the next year
     "temp": {
         "didDebug": False,
         "didPlay": False

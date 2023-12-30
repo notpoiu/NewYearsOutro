@@ -43,9 +43,9 @@
 
     <script>
         const fireworksDiv = document.querySelector('.fireworks')
-        const countdown = document.querySelector('#countdown')
+        const countdownWrapper = document.querySelector('#countdownWrapper')
         const fireworks = new Fireworks.default(fireworksDiv);
-        const didFireworks = false
+        let didFireworks = false
 
         const config = {
             "baseUrl": "http://localhost:8080"
@@ -57,21 +57,32 @@
             return data
         }
 
+        const updateText = (text,countdownText) => {
+            countdownWrapper.innerHTML = text + '<span id="countdown">'+countdownText+'</span>'
+        }
+
         const updateCountdown = async () => {
             const countdownData = await getCountdown()
-
+            
             if (countdownData.countdown <= 0 && !didFireworks) {
-                countdown.innerText = ""
-                countdownWrapper.innerText = "Happy New Year!"
+                console.log(countdownData)
+                
+                updateText("Happy New Years!","")
+
                 fireworks.start()
                 didFireworks = true
-                return
-            }else if (countdownData.countdown > 0 && didFireworks) {
-                didFireworks = false
-                fireworks.stop()
-            }
+            }else {
+                if (!countdownData.countdown || countdownData.countdown < 0 || countdownData.countdown == 0) return
 
-            countdown.innerText = countdownData.countdown+" seconds"
+                console.log("Stopping fireworks")
+                console.log(countdownData)
+                if (didFireworks){
+                    didFireworks = false
+                    fireworks.stop()
+                }
+
+                updateText("Time until New Years: ",countdownData.countdown+" seconds")
+            }
         }
 
         

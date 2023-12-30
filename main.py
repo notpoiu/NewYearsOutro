@@ -1,6 +1,6 @@
 # code is not adapted for pyinstaller so keep that in mind
 
-import time,math,datetime,pygame, webview,threading,os
+import time,math,datetime,pygame, webview,threading,os,logging
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 
@@ -11,6 +11,10 @@ config = {
     "song": "TheFatRat - Xenogenesis",
     "volume": 0.5,
     "debug": True, # to test the song
+    "debugSettings": {
+        "secondsLeft": 3, # seconds left untill new year + song drop length, you can put negative numbers too
+    },
+    "refreshCountdown": 100, # seconds untill the countdown refreshes to the next year
     "temp": {
         "didDebug": False,
         "didPlay": False
@@ -23,6 +27,11 @@ drops = {
 
 pygame.mixer.init()
 app = Flask(__name__)
+
+log = logging.getLogger('werkzeug')
+log.disabled = True
+app.logger.disabled = True
+
 CORS(app)
 
 # totally not yoinked from stack overflow
@@ -31,28 +40,29 @@ def add_secs(tm, secs):
     fulldate = fulldate + datetime.timedelta(seconds=secs)
     return fulldate.time()
 
-def play_song(song_path):
+def play_song(song_path, timeLeft):
     pygame.mixer.music.load(song_path)
     pygame.mixer.music.set_volume(config["volume"])
-    pygame.mixer.music.play()
+    pygame.mixer.music.play(start=abs(timeLeft)) # abs cuz the timeLeft is negative
 
 def get_unix_to_new_year():
-    global new_year, today
+    global new_year, today, config
 
     if config["debug"]:
         if not config["temp"]["didDebug"]:
             config["temp"]["didDebug"] = True
 
             # very long line so what this does is
-            # it gets the current time and adds the whole song length untill the drop + 3 seconds to the current time
+            # it gets the current time and adds the whole song length untill the drop + debugSettings to the current time
             # and sets it as the new year. This is basically to test the song not used anymore.
-            new_year = datetime.datetime.combine(datetime.date.today(), add_secs(datetime.datetime.now().time(), drops[config["song"]]+3))
-    else:
+            new_year = datetime.datetime.combine(datetime.date.today(), add_secs(datetime.datetime.now().time(), drops[config["song"]]+config["debugSettings"]["secondsLeft"]))
 
-        # if time is greater than new year + 7 days then set new year to next year
-        if time.time() > time.mktime(new_year.timetuple()) + 604800:
-            new_year = datetime.date(today.year + 1, 1, 1)
-            today = datetime.date.today()
+    # if time is greater than new year + config["refreshCountdown"] then set new year to next year
+    if time.time() > time.mktime(new_year.timetuple()) + config["refreshCountdown"]:
+        pygame.mixer.music.stop()
+        new_year = datetime.date(today.year + 1, 1, 1)
+        today = datetime.date.today()
+        config["temp"]["didPlay"] = False
     
     return time.mktime(new_year.timetuple())
 
@@ -73,7 +83,7 @@ def new_year_countdown():
 
     if timeLeft <= drops[config["song"]] and not config["temp"]["didPlay"]:
         config["temp"]["didPlay"] = True
-        play_song('music/' + config["song"] + '.mp3')
+        play_song('music/' + config["song"] + '.mp3', timeLeft - drops[config["song"]])
 
     return jsonify({"countdown": "{:,}".format(math.floor(timeLeft))})
 
