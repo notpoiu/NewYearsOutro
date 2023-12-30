@@ -49,7 +49,7 @@ Then you need to define at what time the song's beat drop will occur in seconds.
 You can do this by adding a new property to the drop dictionary in `main.py`:
 ```python
 drops = {
-    "TheFatRat - Xenogenesis": 58.5 # time where the drop starts (s)
+    "TheFatRat - Xenogenesis": 58.5, # time where the drop starts (s)
     "your song": 0 # time where the drop starts (s)
 }
 ```
