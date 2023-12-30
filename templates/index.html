@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>New Years Countdown</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            color: white;
+            background-color: black;
+            overflow: hidden;
+        }
+
+        #countdown {
+            color: greenyellow;
+            text-align: center;
+        }
+
+        .countdownContainer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .fireworks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="https://unpkg.com/fireworks-js@2.x/dist/index.umd.js"></script>
+</head>
+<body>
+    <div class="fireworks"></div>
+    <div class="countdownContainer">
+        <h1>New Years Countdown</h1>
+        <p>Time until New Years: <span id="countdown"></span></p>
+    </div>
+
+    <script>
+        const fireworksDiv = document.querySelector('.fireworks')
+        const countdown = document.querySelector('#countdown')
+        const didFireworks = false
+
+        const config = {
+            "baseUrl": "http://localhost:8080"
+        }
+
+        const getCountdown = async () => {
+            const response = await fetch(`${config.baseUrl}/api/get_countdown`)
+            const data = await response.json()
+            return data
+        }
+
+        const updateCountdown = async () => {
+            const countdownData = await getCountdown()
+
+            if (countdownData.countdown <= 0 && !didFireworks) {
+                countdown.innerText = "Happy New Years!"
+                startFireworks()
+                didFireworks = true
+                return
+            }
+
+            countdown.innerText = countdownData.countdown+" seconds"
+        }
+
+        const startFireworks = () => {
+            const fireworks = new Fireworks.default(fireworksDiv);
+            fireworks.start();
+        }
+
+        
+        const init = async () => {
+            await updateCountdown()
+            //startFireworks()
+            setInterval(updateCountdown, 100)
+        }
+
+        init()
+
+    </script>
+</body>
+</html>
