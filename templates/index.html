@@ -66,6 +66,9 @@
                 fireworks.start()
                 didFireworks = true
                 return
+            }else if (countdownData.countdown > 0 && didFireworks) {
+                didFireworks = false
+                fireworks.stop()
             }
 
             countdown.innerText = countdownData.countdown+" seconds"
