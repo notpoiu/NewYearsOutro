@@ -25,6 +25,7 @@ pygame.mixer.init()
 app = Flask(__name__)
 CORS(app)
 
+# totally not yoinked from stack overflow
 def add_secs(tm, secs):
     fulldate = datetime.datetime(100, 1, 1, tm.hour, tm.minute, tm.second)
     fulldate = fulldate + datetime.timedelta(seconds=secs)
