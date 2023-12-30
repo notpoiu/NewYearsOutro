@@ -38,12 +38,13 @@
     <div class="fireworks"></div>
     <div class="countdownContainer">
         <h1>New Years Countdown</h1>
-        <p>Time until New Years: <span id="countdown"></span></p>
+        <p id="countdownWrapper">Time until New Years: <span id="countdown"></span></p>
     </div>
 
     <script>
         const fireworksDiv = document.querySelector('.fireworks')
         const countdown = document.querySelector('#countdown')
+        const fireworks = new Fireworks.default(fireworksDiv);
         const didFireworks = false
 
         const config = {
@@ -60,8 +61,9 @@
             const countdownData = await getCountdown()
 
             if (countdownData.countdown <= 0 && !didFireworks) {
-                countdown.innerText = "Happy New Years!"
-                startFireworks()
+                countdown.innerText = ""
+                countdownWrapper.innerText = "Happy New Year!"
+                fireworks.start()
                 didFireworks = true
                 return
             }
@@ -69,15 +71,9 @@
             countdown.innerText = countdownData.countdown+" seconds"
         }
 
-        const startFireworks = () => {
-            const fireworks = new Fireworks.default(fireworksDiv);
-            fireworks.start();
-        }
-
         
         const init = async () => {
             await updateCountdown()
-            //startFireworks()
             setInterval(updateCountdown, 100)
         }
 
