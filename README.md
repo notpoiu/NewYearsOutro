@@ -9,3 +9,45 @@ $ git clone https://github.com/notpoiu/NewYearsOutro.git
 ...
 $ cd NewYearsOutro && pip3 install -r requirements.txt
 ```
+
+## Testing
+To test the app you can edit the "debug" property in the configuration dictionary in `main.py`:
+```python
+config = {
+    "song": "TheFatRat - Xenogenesis",
+    "volume": 0.5,
+    "debug": True, # Change this to False to disable debug mode
+    "temp": {
+        "didDebug": False,
+        "didPlay": False
+    }
+}
+```
+
+## Changing the song
+To change the song you can edit the "song" property in the configuration dictionary in `main.py`:
+```python
+config = {
+    "song": "your song", # Change this to the song you want
+    "volume": 0.5,
+    "debug": True,
+    "temp": {
+        "didDebug": False,
+        "didPlay": False
+    }
+}
+```
+Then you need to define at what time the song's beat drop will occur in seconds.
+You can do this by adding a new property to the drop dictionary in `main.py`:
+```python
+drops = {
+    "TheFatRat - Xenogenesis": 58.5 # time where the drop starts (s)
+    "your song": 0 # time where the drop starts (s)
+}
+```
+Finally you need to add the song into the music directory and name the mp3 file the same as the song property in the configuration dictionary:
+```
+music
+├── TheFatRat - Xenogenesis.mp3
+└── your song.mp3
+```
