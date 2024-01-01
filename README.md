@@ -7,7 +7,7 @@ clone the repo and then install the requirements:
 ```bash
 $ git clone https://github.com/notpoiu/NewYearsOutro.git
 ...
-$ cd NewYearsOutro && pip3 install -r requirements.txt
+$ cd NewYearsOutro && pip install -r requirements.txt
 ```
 
 ## Testing
