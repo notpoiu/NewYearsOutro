@@ -1,8 +1,6 @@
 # code is not adapted for pyinstaller so keep that in mind
 
-import time,math,datetime,pygame, webview,threading,os,logging
-from flask import Flask, render_template, jsonify
-from flask_cors import CORS
+import time, math, datetime, pygame, webview
 
 today = datetime.date.today()
 new_year = datetime.date(today.year + 1, 1, 1)
@@ -10,9 +8,9 @@ new_year = datetime.date(today.year + 1, 1, 1)
 config = {
     "song": "TheFatRat - Xenogenesis",
     "volume": 0.5,
-    "debug": False, # to test the song
+    "debug": True, # to test the song
     "debugSettings": {
-        "secondsLeft": 3, # seconds left untill new year + song drop length, you can put negative numbers too
+        "secondsLeft": -19, # seconds left untill new year + song drop length, you can put negative numbers too
     },
     "refreshCountdown": 100, # seconds untill the countdown refreshes to the next year
     "temp": {
@@ -26,13 +24,6 @@ drops = {
 }
 
 pygame.mixer.init()
-app = Flask(__name__)
-
-log = logging.getLogger('werkzeug')
-log.disabled = True
-app.logger.disabled = True
-
-CORS(app)
 
 # totally not yoinked from stack overflow
 def add_secs(tm, secs):
@@ -67,17 +58,11 @@ def get_unix_to_new_year():
     return time.mktime(new_year.timetuple())
 
 def close_window():
+    pygame.mixer.music.fadeout(2000)
     pygame.mixer.music.stop()
     pygame.mixer.quit()
-    os._exit(0)
-    
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/api/get_countdown')
-def new_year_countdown():
+def get_countdown():
     nextYearUnix = get_unix_to_new_year()
     timeLeft = nextYearUnix - time.time()
 
@@ -85,12 +70,11 @@ def new_year_countdown():
         config["temp"]["didPlay"] = True
         play_song('music/' + config["song"] + '.mp3', timeLeft - drops[config["song"]])
 
-    return jsonify({"countdown": "{:,}".format(math.floor(timeLeft))})
+    return {"countdown": "{:,}".format(math.floor(timeLeft))}
 
 if __name__ == '__main__':
-    threading.Thread(target=app.run, kwargs={'port': 8080}).start()
-
-    window = webview.create_window('New Year Countdown | Made by upio', 'http://localhost:8080', width=800, height=800, resizable=False)
+    window = webview.create_window('New Year Countdown | Made by upio', 'index.html', width=800, height=800, resizable=False)
+    window.expose(get_countdown)
     window.events.closing += close_window
 
     webview.start()
